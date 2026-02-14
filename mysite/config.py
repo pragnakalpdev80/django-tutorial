@@ -23,6 +23,6 @@ class Settings(BaseSettings):
 try:
     settings = Settings()
 except ValidationError as e:
-    print("\n❌ Environment configuration error:\n")
+    print("Environment configuration error:")
     print(e)
     raise SystemExit(1)
