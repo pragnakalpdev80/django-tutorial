@@ -1,0 +1,17 @@
+{% block content %}
+    <h2>Login</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% if messages %}
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        {% endif %}
+        Username: <input type="text" name="username"><br>
+        Password: <input type="password" name="password"><br>
+        <input type="submit" value="Login" />
+    </form>
+    <p>
+        <a href="{% url 'polls:register' %}">register</a>
+    </p>
+{% endblock content %}

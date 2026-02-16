@@ -20,7 +20,6 @@ class Settings(BaseSettings):
         # }
     )
 
-
 try:
     settings=Settings()
 except ValidationError as e:

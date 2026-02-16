@@ -67,7 +67,7 @@ TEMPLATES = [
         },
     },
 ]
-
+LOGIN_URL = "/polls/login/"
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
 
