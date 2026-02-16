@@ -55,7 +55,6 @@ class VoteView(View):
         try:
             selected_choice = question.choice_set.get(pk=request.POST["choice"])
         except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
             return render(
                 request,
                 "polls/detail.html",
