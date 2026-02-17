@@ -155,3 +155,9 @@ def register(request):
         user.save()        
         messages.info(request, "Account created Successfully!")
     return render(request, "registration/register.html")
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
+    class Meta():
+        model = User
+        fields = ('username','password','email')
