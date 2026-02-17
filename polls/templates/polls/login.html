@@ -1,4 +1,4 @@
-{% block content %}
+<!-- {% block content %}
     <h2>Login</h2>
     <form method="post">
         {% csrf_token %}
@@ -14,4 +14,15 @@
     <p>
         <a href="{% url 'polls:register' %}">register</a>
     </p>
-{% endblock content %}
+{% endblock content %} -->
+
+<h2>Log In</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form }}
+  <button type="submit">Log In</button>
+</form>
+
+<p>
+    <a href="{% url 'polls:register' %}">Register</a>
+</p>

@@ -1,0 +1,5 @@
+django
+pydantic_settings
+pydantic
+dotenv
+pathlib

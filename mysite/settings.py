@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from .config import settings
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,7 +52,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'mysite.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -69,7 +69,8 @@ TEMPLATES = [
 ]
 LOGIN_URL = "/polls/login/"
 WSGI_APPLICATION = 'mysite.wsgi.application'
-
+LOGIN_REDIRECT_URL = "/polls/" 
+LOGOUT_REDIRECT_URL = "/polls/login/"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

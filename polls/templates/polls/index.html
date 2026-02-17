@@ -11,6 +11,12 @@
 {% else %}
     <p>No polls are available.</p>
 {% endif %}
-    <p>
-        <a href="{% url 'polls:login' %}">login</a>
-    </p>
+{% if messages %}
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        {% endif %}
+<form action="{% url 'polls:logout' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">Log Out</button>
+</form>

@@ -12,12 +12,14 @@ from . import views
 
 app_name = "polls"
 urlpatterns = [
-    path("login/", views.login,name="login"),
     path("index/", views.index,name="index2"),
     path("", views.IndexView.as_view(), name="index"),
     path("<int:pk>/", views.DetailView.as_view(), name="detail"),                                                                                                                                       
     path("<int:pk>/results/", views.ResultsView.as_view(), name="results"),
     path("<int:question_id>/vote/", views.VoteView.as_view(), name="vote"),
-    path("register/", views.register, name="register"),
+    # path("registerfunc/", views.register, name="registerf"),
+    path('register/', views.RegistrationView.as_view(), name='register'),
+    path("login/",views.LoginView.as_view(),name="login"),
+    path("logout/",views.LogoutView.as_view(),name="logout")
 ]
 

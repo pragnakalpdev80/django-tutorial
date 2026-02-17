@@ -9,10 +9,12 @@ from django.urls import reverse
 from django.views import generic, View
 from django.utils import timezone
 from django.contrib import messages
-from django.contrib.auth import authenticate,login
+from django.contrib.auth.views import LoginView,LogoutView
+from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from .forms import RegistrationForm, LoginForm
 
 @login_required
 def index(request):
@@ -28,7 +30,8 @@ def index(request):
 #     question = get_object_or_404(Question, pk=question_id)
 #     return render(request, "polls/results.html", {"question": question})
 
-class IndexView(generic.ListView):
+class IndexView(LoginRequiredMixin,generic.ListView):
+    login_url = "/polls/login/"
     template_name = "polls/index.html"
     context_object_name = "latest_question_list"
 
@@ -111,8 +114,14 @@ class VoteView(View):
 #         # with POST data. This prevents data from being posted twice if a
 #         # user hits the Back button.
 #         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
-def login(request):
-    if request.method == "POST":
+
+class LoginView(LoginView):
+    template_name = 'polls/login.html'
+    def get(self, request):
+        form= LoginForm()
+        return render(request, self.template_name, { 'form': form})
+
+    def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         
@@ -121,43 +130,70 @@ def login(request):
         if user is None:
             messages.error(request,"Username or Password not matched")
             return redirect('/polls/login/')
+        login(request,user)
         return redirect("/polls/")
-    return render(request, 'registration/login.html')
+    
 
-def register(request):
-    if request.user.is_authenticated:
-        return redirect("/polls/")
-    if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        cpassword = request.POST.get('cpassword')
+class LogoutView(View):
+    def post(self,request):
+        if request.user.is_authenticated:
+            logout(request)
+            return redirect('/polls/login/')
+# def login(request):
+#     if request.method == "POST":
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+        
+#         user = authenticate(username=username, password=password)
+#         print(user)
+#         if user is None:
+#             messages.error(request,"Username or Password not matched")
+#             return redirect('/polls/login/')
+#         return redirect("/polls/")
+#     return render(request, 'registration/login.html')
 
-        
-        user = User.objects.filter(username=username)
-        
-        if user.exists():
-            messages.info(request, "Username already taken!")
-            return redirect('/polls/register/')
-        
-        user = User.objects.create_user(
-            first_name=first_name,
-            last_name=last_name,
-            username=username,
-            email=email
-        )   
-        if not password==cpassword:
-            messages.error(request,"Password not matched")
-            return redirect('/polls/register/')
-        user.set_password(password)
-        user.save()        
+class RegistrationView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect("/polls/")
+        form = RegistrationForm()
+        return render(request, 'polls/register.html', { 'form': form})  
+    
+    def post(self, request):
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/polls/login/')        
         messages.info(request, "Account created Successfully!")
-    return render(request, "registration/register.html")
+    
+# def register(request):
+#     if request.user.is_authenticated:
+#         return redirect("/polls/")
+#     if request.method == 'POST':
+#         first_name = request.POST.get('first_name')
+#         last_name = request.POST.get('last_name')
+#         username = request.POST.get('username')
+#         email = request.POST.get('email')
+#         password = request.POST.get('password')
+#         cpassword = request.POST.get('cpassword')
 
-class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-    class Meta():
-        model = User
-        fields = ('username','password','email')
+        
+#         user = User.objects.filter(username=username)
+        
+#         if user.exists():
+#             messages.info(request, "Username already taken!")
+#             return redirect('/polls/register/')
+        
+#         user = User.objects.create_user(
+#             first_name=first_name,
+#             last_name=last_name,
+#             username=username,
+#             email=email
+#         )   
+#         if not password==cpassword:
+#             messages.error(request,"Password not matched")
+#             return redirect('/polls/register/')
+#         user.set_password(password)
+#         user.save()        
+#         messages.info(request, "Account created Successfully!")
+#     return render(request, "registration/register.html")
