@@ -2,7 +2,7 @@ from django.db.models import F
 from django.shortcuts import render, get_object_or_404,redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm
-from .models import Question, Choice
+from .models import Question, Choice, Voter
 from django.template import loader
 from django.http import Http404,request
 from django.urls import reverse
@@ -41,7 +41,6 @@ class IndexView(generic.ListView):
 
 class DetailView(LoginRequiredMixin,generic.DetailView):
     login_url = "/polls/login/"
-    redirect_field_name = "polls:login"
     model = Question
     template_name = "polls/detail.html"
     
@@ -60,6 +59,18 @@ class VoteView(View):
     
     def post(self,request,question_id):
         question = get_object_or_404(Question, pk=question_id)
+        # print(question_id)
+        voters=[users.users_id for users in Voter.objects.filter(question_id=question_id)]
+        # print(f"Voters: {voters}")
+        # print(f"user id: {request.user.id}")
+        if request.user.id in voters:
+            voted_choice=[users.choice_id for users in Voter.objects.filter(question_id=question_id)]
+            choice=[choice.choice_text for choice in Choice.objects.filter(id=voted_choice[0])]
+            
+            return render(request, 'polls/detail.html', {
+            "question": question,
+            'error_message': f"Sorry, but you have already voted to '{choice[0]}'."
+            })
         try:
             selected_choice = question.choice_set.get(pk=request.POST["choice"])
         except (KeyError, Choice.DoesNotExist):
@@ -74,9 +85,11 @@ class VoteView(View):
         else:
             selected_choice.votes = F("votes") + 1
             selected_choice.save()
+            v = Voter(users_id=request.user.id, question=question,choice=selected_choice)
+            v.save()
             return HttpResponseRedirect(reverse("polls:results", args=(question.pk,)))
  
-    
+
 # def vote(request, question_id):
 #     question = get_object_or_404(Question, pk=question_id)
 #     try:
