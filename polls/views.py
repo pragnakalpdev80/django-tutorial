@@ -171,17 +171,26 @@ class RegistrationView(View):
 #         return redirect("/polls/")
 #     if request.method == 'POST':
 #         first_name = request.POST.get('first_name')
+#         print(first_name)
 #         last_name = request.POST.get('last_name')
+#         print(last_name)
 #         username = request.POST.get('username')
+#         print(username)
 #         email = request.POST.get('email')
+#         print(email)
 #         password = request.POST.get('password')
+#         print(password)
 #         cpassword = request.POST.get('cpassword')
-
+#         print(password)
         
 #         user = User.objects.filter(username=username)
         
 #         if user.exists():
 #             messages.info(request, "Username already taken!")
+#             return redirect('/polls/register/')
+#         if not password==cpassword:
+#             print("pass not matched")
+#             messages.error(request,"Password not matched")
 #             return redirect('/polls/register/')
         
 #         user = User.objects.create_user(
@@ -190,10 +199,9 @@ class RegistrationView(View):
 #             username=username,
 #             email=email
 #         )   
-#         if not password==cpassword:
-#             messages.error(request,"Password not matched")
-#             return redirect('/polls/register/')
+        
+#         print("user register")
 #         user.set_password(password)
 #         user.save()        
 #         messages.info(request, "Account created Successfully!")
-#     return render(request, "registration/register.html")
+#     return render(request, "polls/register_function.html")
